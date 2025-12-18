@@ -14,7 +14,7 @@ function App() {
   const handlesend = () => {
     setstatus(true);
     axios
-      .post("https://bulkmail-app-backend-5.onrender.com", {
+      .post("https://bulkmail-app-backend-5.onrender.com/sendmail", {
         msg: msg,
         emaillist: emaillist,
       })
