@@ -3,50 +3,50 @@ import { useState } from "react";
 import * as XLSX from "xlsx";
 
 function App() {
-  const [msg, setmsg] = useState("");
-  const [status, setstatus] = useState(false);
-  const [emaillist, setemaillist] = useState([]);
+  const [msg, setMsg] = useState("");
+  const [status, setStatus] = useState(false);
+  const [emaillist, setEmailList] = useState([]);
 
-  const handlechange = (e) => {
-    setmsg(e.target.value);
-  };
+  const handleChange = (e) => setMsg(e.target.value);
 
-  const handlesend = () => {
-    setstatus(true);
-    axios
-      .post("https://bulkmail-app-backend-8.onrender.com/sendmail", {
-        msg: msg,
-        emaillist: emaillist,
-      })
-      .then(function (data) {
-        setstatus(false);
-        if (data.data === true) {
-          alert("Email sent successfully");
-        } else {
-          alert("Failed");
-        }
-      })
-      .catch(() => {
-        setstatus(false);
-        alert("Server Error");
-      });
+  const handleSend = async () => {
+    if (!msg || emaillist.length === 0) {
+      alert("Please enter a message and upload emails.");
+      return;
+    }
+
+    setStatus(true);
+    try {
+      const { data } = await axios.post(
+        "https://bulkmail-app-backend-9.onrender.com/sendmail",
+        { msg, emaillist }
+      );
+
+      setStatus(false);
+      if (data.success) {
+        alert("✅ Emails sent successfully");
+      } else {
+        alert("❌ Failed: " + data.message);
+      }
+    } catch (error) {
+      setStatus(false);
+      alert("❌ Server Error: " + (error.response?.data?.message || error.message));
+    }
   };
 
   const handleFile = (event) => {
     const file = event.target.files[0];
-    const reader = new FileReader();
+    if (!file) return;
 
-    reader.onload = function (event) {
-      const data = event.target.result;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = e.target.result;
       const workbook = XLSX.read(data, { type: "binary" });
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
       const emailList = XLSX.utils.sheet_to_json(worksheet, { header: "A" });
-
-      const totalemail = emailList.map((item) => item.A);
-      setemaillist(totalemail);
+      setEmailList(emailList.map((item) => item.A).filter(Boolean)); // Remove empty
     };
-
     reader.readAsBinaryString(file);
   };
 
@@ -55,28 +55,22 @@ function App() {
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-950 to-blue-700 text-white text-center py-4">
         <h1 className="text-3xl font-semibold">📧 Bulk Mail App</h1>
-        <p className="text-sm mt-1">
-          Send multiple emails easily with Excel upload
-        </p>
+        <p className="text-sm mt-1">Send multiple emails easily with Excel upload</p>
       </div>
 
       {/* Main Card */}
       <div className="bg-blue-100 min-h-screen flex justify-center items-start py-10">
         <div className="bg-white w-[85%] md:w-[60%] rounded-xl shadow-lg p-6">
-          
           {/* Text Area */}
           <label className="font-medium">Email Message</label>
           <textarea
             className="w-full h-32 mt-2 p-2 border border-gray-400 rounded-md outline-none"
             placeholder="Enter your email content..."
             value={msg}
-            onChange={handlechange}
+            onChange={handleChange}
           ></textarea>
 
-          {/* Character Counter */}
-          <p className="text-sm text-gray-600 text-right">
-            Characters: {msg.length}
-          </p>
+          <p className="text-sm text-gray-600 text-right">Characters: {msg.length}</p>
 
           {/* File Upload */}
           <div className="mt-4">
@@ -99,20 +93,17 @@ function App() {
           <div className="mt-5">
             <h3 className="font-medium mb-2">👀 Email Preview</h3>
             <div className="border rounded-md p-3 bg-gray-50 text-sm">
-              {msg ? msg : "Your email content will appear here..."}
+              {msg || "Your email content will appear here..."}
             </div>
           </div>
 
           {/* Send Button */}
           <div className="flex justify-center mt-6">
             <button
-              onClick={handlesend}
+              onClick={handleSend}
               disabled={status}
-              className={`px-6 py-2 rounded-md text-white font-medium transition 
-              ${
-                status
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-blue-900 hover:bg-blue-800"
+              className={`px-6 py-2 rounded-md text-white font-medium transition ${
+                status ? "bg-gray-400 cursor-not-allowed" : "bg-blue-900 hover:bg-blue-800"
               }`}
             >
               {status ? "Sending..." : "Send Email"}
