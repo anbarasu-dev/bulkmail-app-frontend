@@ -18,7 +18,7 @@ function App() {
     setStatus(true);
     try {
       const { data } = await axios.post(
-        "https://bulkmail-app-backend-9.onrender.com/sendmail",
+        "https://bulkmail-app-backend-11.onrender.com/sendmail",
         { msg, emaillist }
       );
 
