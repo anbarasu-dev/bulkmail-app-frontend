@@ -7,13 +7,13 @@ function App() {
   const [status, setStatus] = useState(false);
   const [emaillist, setEmailList] = useState([]);
 
-
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-
+ 
 
   const handleChange = (e) => setMsg(e.target.value);
 
-  
+ 
+  const handleSend = async () => {
     if (!msg || emaillist.length === 0) {
       alert("Please enter a message and upload emails.");
       return;
@@ -49,7 +49,7 @@ function App() {
     }
   };
 
-  /* ================= HANDLE EXCEL FILE ================= */
+ 
   const handleFile = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -66,10 +66,7 @@ function App() {
 
       const emails = rows
         .map((row) => row.A)
-        .filter(
-          (email) =>
-            typeof email === "string" && email.includes("@")
-        );
+        .filter((email) => typeof email === "string" && email.includes("@"));
 
       setEmailList(emails);
     };
@@ -79,7 +76,6 @@ function App() {
 
   return (
     <>
-     
       <div className="bg-gradient-to-r from-blue-950 to-blue-700 text-white text-center py-4">
         <h1 className="text-3xl font-semibold">📧 Bulk Mail App</h1>
         <p className="text-sm mt-1">
@@ -87,11 +83,8 @@ function App() {
         </p>
       </div>
 
- 
       <div className="bg-blue-100 min-h-screen flex justify-center items-start py-10">
         <div className="bg-white w-[85%] md:w-[60%] rounded-xl shadow-lg p-6">
-
-        
           <label className="font-medium">Email Message</label>
           <textarea
             className="w-full h-32 mt-2 p-2 border border-gray-400 rounded-md outline-none"
@@ -104,7 +97,6 @@ function App() {
             Characters: {msg.length}
           </p>
 
-         
           <div className="mt-4">
             <label className="font-medium">Upload Excel File</label>
             <input
@@ -115,14 +107,12 @@ function App() {
             />
           </div>
 
-      
           <div className="mt-4">
             <span className="bg-blue-200 text-blue-900 px-3 py-1 rounded-full text-sm font-medium">
               📧 Total Emails: {emaillist.length}
             </span>
           </div>
 
-       
           <div className="mt-5">
             <h3 className="font-medium mb-2">👀 Email Preview</h3>
             <div className="border rounded-md p-3 bg-gray-50 text-sm">
@@ -130,7 +120,6 @@ function App() {
             </div>
           </div>
 
-         
           <div className="flex justify-center mt-6">
             <button
               onClick={handleSend}
@@ -147,7 +136,6 @@ function App() {
         </div>
       </div>
 
-     
       <div className="bg-blue-900 text-white text-center py-3 text-sm">
         Built with ❤️ using React, Node & SendGrid
       </div>
