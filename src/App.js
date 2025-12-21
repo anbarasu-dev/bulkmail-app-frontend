@@ -8,6 +8,7 @@ function App() {
   const [emaillistCount, setEmailListCount] = useState(0);
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+  
 
   const handleChange = (e) => setMsg(e.target.value);
 
@@ -55,7 +56,6 @@ function App() {
         setMsg("");
         setFile(null);
         setEmailListCount(0);
-        // Reset file input
         document.getElementById("fileInput").value = "";
       } else {
         alert("❌ Failed: " + data.message);
@@ -105,7 +105,11 @@ function App() {
           <div className="mt-5">
             <h3 className="font-medium mb-2">👀 Email Preview</h3>
             <div className="border rounded-md p-3 bg-gray-50 text-sm">
-              {msg || "Your email content will appear here..."}
+              {msg ? (
+                <div style={{ whiteSpace: "pre-line" }}>{msg}</div> // preserves line breaks
+              ) : (
+                "Your email content will appear here..."
+              )}
             </div>
           </div>
 
