@@ -8,7 +8,7 @@ function App() {
   const [emaillist, setEmailList] = useState([]);
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-  console.log(process.env.REACT_APP_BACKEND_URL)
+ 
  
 
   const handleChange = (e) => setMsg(e.target.value);
